@@ -1,0 +1,21 @@
+name: preview-image
+on:
+  push:
+    paths:
+      - preview.b64
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write preview image
+        run: base64 -d preview.b64 > preview.jpg
+      - name: Commit image
+        run: |
+          git config user.name "wes1086"
+          git config user.email "wes@blackandwhiteroof.com"
+          git add preview.jpg
+          git diff --cached --quiet || git commit -m "Add link preview image [skip ci]"
+          git push

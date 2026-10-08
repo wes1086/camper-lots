@@ -1,4 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta property="og:title" content="Camper lots">
+<meta property="og:description" content="Camden County lots where you can put a camper.">
+<meta property="og:image" content="https://wes1086.github.io/camper-lots/preview.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="404">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wes1086.github.io/camper-lots/preview.jpg">
 <title>Camper Lots</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -9,6 +16,7 @@
 .wrap{display:flex;height:100%}#map{flex:1}
 aside{width:390px;max-width:44vw;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
 header{padding:14px 16px;border-bottom:1px solid var(--line)}h1{font-size:17px;margin:0 0 4px}.sub{color:var(--mut);font-size:12px}
+.brand{height:56px;width:56px;border-radius:50%;object-fit:cover;float:right;margin-left:8px}
 .filters{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.filters button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:14px;padding:4px 10px;font-size:12px;cursor:pointer}
 .filters button.on{background:var(--fg);color:var(--bg)}
 details.about{margin-top:10px;font-size:12px;color:var(--mut)}details.about summary{cursor:pointer;color:var(--fg);font-weight:600}
@@ -20,7 +28,7 @@ details.about{margin-top:10px;font-size:12px;color:var(--mut)}details.about summ
 .legend span{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--bg);color:var(--fg)}.pop{font-size:12.5px;max-width:330px}.pop h3{margin:0 0 4px;font-size:14px}.pop .k{color:var(--mut)}.pop hr{border:0;border-top:1px solid var(--line);margin:6px 0}
 @media (max-width:700px){.wrap{flex-direction:column}aside{width:100%;max-width:none;height:46%}#map{height:54%}}
-</style></head><body><div class="wrap"><aside><header><h1>Camper lots</h1>
+</style></head><body><div class="wrap"><aside><header><img class="brand" src="preview.jpg" alt="Black and White"><h1>Camper lots</h1>
 <div class="sub">Camden County lots outside city limits where you can put a camper. Click a lot for details.</div>
 <div class="sub" style="margin-top:6px"><b>Call or text Wes 573-480-8756 with any questions.</b></div></header>
 <div class="list" id="list"></div></aside><div id="map"></div></div>
