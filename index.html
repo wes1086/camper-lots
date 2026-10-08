@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Camper Lots</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{--bg:#fff;--fg:#1d1d21;--mut:#6b6b70;--line:#e3e3e8;--card:#f7f7f9}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--fg:#ececf0;--mut:#9a9aa3;--line:#2a2a30;--card:#1d1d21}}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{display:flex;height:100%}#map{flex:1}
+aside{width:390px;max-width:44vw;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+header{padding:14px 16px;border-bottom:1px solid var(--line)}h1{font-size:17px;margin:0 0 4px}.sub{color:var(--mut);font-size:12px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.filters button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:14px;padding:4px 10px;font-size:12px;cursor:pointer}
+.filters button.on{background:var(--fg);color:var(--bg)}
+details.about{margin-top:10px;font-size:12px;color:var(--mut)}details.about summary{cursor:pointer;color:var(--fg);font-weight:600}
+.list{overflow:auto;flex:1}.item{padding:9px 16px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.item:hover{background:var(--card)}.dot{width:12px;height:12px;border-radius:50%;margin-top:4px;flex:none}
+.t{font-weight:600}.m{color:var(--mut);font-size:12px}.pv{font-weight:700}.warn{color:#d97706}.ok{color:#16a34a}
+.lab{background:rgba(0,0,0,.72);color:#fff;border:0;border-radius:4px;padding:1px 5px;font-size:11px;font-weight:600;box-shadow:none}.lab:before{display:none}
+.legend{background:var(--bg);color:var(--fg);padding:8px 10px;border-radius:8px;font-size:12px;box-shadow:0 1px 4px rgba(0,0,0,.3);max-width:280px}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--bg);color:var(--fg)}.pop{font-size:12.5px;max-width:330px}.pop h3{margin:0 0 4px;font-size:14px}.pop .k{color:var(--mut)}.pop hr{border:0;border-top:1px solid var(--line);margin:6px 0}
+@media (max-width:700px){.wrap{flex-direction:column}aside{width:100%;max-width:none;height:46%}#map{height:54%}}
+</style></head><body><div class="wrap"><aside><header><h1>Camper lots</h1>
+<div class="sub">Camden County lots outside city limits where you can put a camper. Click a lot for details.</div>
+<div class="sub" style="margin-top:6px"><b>Call or text Wes 573-480-8756 with any questions.</b></div></header>
+<div class="list" id="list"></div></aside><div id="map"></div></div>
+<script>
+const DATA={"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.799526, 38.181322], [-92.799613, 38.181257], [-92.799602, 38.181126], [-92.799882, 38.18107], [-92.800135, 38.181057], [-92.800413, 38.181044], [-92.799776, 38.181565], [-92.799526, 38.181322]]]}, "properties": {"name": "West Tract A (Hwy 5, Sunrise Beach)", "parcel": "02-8.0-34.0-000.0-004-022.001", "acres": 0.539, "price": 29000, "feature": "Over half an acre, right next to Tract B"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.800008, 38.180668], [-92.800114, 38.180662], [-92.800115, 38.180665], [-92.800135, 38.181057], [-92.799882, 38.18107], [-92.799847, 38.180694], [-92.799846, 38.180687], [-92.799927, 38.180675], [-92.800008, 38.180668]]]}, "properties": {"name": "West Tract B (Hwy 5, Sunrise Beach)", "parcel": "02-8.0-34.0-000.0-004-019.000", "acres": 0.247, "price": 25000, "feature": "Next to Tract A - buy one or both"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.800695, 38.179805], [-92.800765, 38.179746], [-92.801033, 38.180036], [-92.800769, 38.180511], [-92.800764, 38.18052], [-92.80058, 38.180526], [-92.800582, 38.180515], [-92.800695, 38.179805]]]}, "properties": {"name": "West Tract C (Hwy 5, Sunrise Beach)", "parcel": "02-8.0-34.0-000.0-005-003.003", "acres": 0.474, "price": 25000, "feature": "Nearly half an acre, close to Tracts A and B"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.759734, 38.123366], [-92.75975, 38.123095], [-92.760616, 38.123106], [-92.760599, 38.123241], [-92.760588, 38.123377], [-92.759734, 38.123366]]]}, "properties": {"name": "Ward Hill Lot 11", "parcel": "07-6.0-14.0-000.0-001-012.000", "acres": 0.56, "price": 25000, "feature": "Over half an acre in Ward Hill subdivision"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.699322, 38.096856], [-92.699377, 38.096761], [-92.699393, 38.096731], [-92.699671, 38.096753], [-92.699844, 38.096766], [-92.700018, 38.09678], [-92.70015, 38.09679], [-92.70004, 38.096914], [-92.699322, 38.096856]]]}, "properties": {"name": "Tahoe Lake Estates Unit 1, Blk 1, Lot 32", "parcel": "08-9.0-29.0-000.0-001-003.000", "acres": 0.233, "price": 12500, "feature": "Seasonal lake view, partial lake view in summer. Largest Tahoe lot here"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.695971, 38.09482], [-92.696118, 38.094969], [-92.696077, 38.09507], [-92.696036, 38.095171], [-92.695812, 38.095071], [-92.695868, 38.094933], [-92.695911, 38.094829], [-92.695912, 38.094826], [-92.695913, 38.094824], [-92.695918, 38.094819], [-92.695923, 38.094816], [-92.695929, 38.094813], [-92.695935, 38.094811], [-92.695941, 38.09481], [-92.695948, 38.09481], [-92.695954, 38.094811], [-92.69596, 38.094813], [-92.695966, 38.094816], [-92.695971, 38.09482]]]}, "properties": {"name": "Tahoe Lake Estates Unit 3, Blk 1, Lots 39-40 (two lots)", "parcel": "08-8.0-28.0-000.0-002-021.000", "acres": 0.155, "price": 15000, "feature": "Two lots together"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.700003, 38.096401], [-92.700111, 38.096088], [-92.700289, 38.096073], [-92.700171, 38.096416], [-92.700037, 38.096404], [-92.700003, 38.096401]]]}, "properties": {"name": "Tahoe Lake Estates Unit 1, Blk 2, Lot 4", "parcel": "08-9.0-29.0-000.0-001-021.000", "acres": 0.136, "price": 20000, "feature": "Good lot for a small metal shop or commercial building"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.576868, 37.830024], [-92.576907, 37.828926], [-92.57805, 37.828944], [-92.57801, 37.830042], [-92.576868, 37.830024]]]}, "properties": {"name": "3-Acre Tract (SE Camden County, Sec 28-36-15)", "parcel": "23-8.0-28.0-000.0-000-006.000", "acres": 3.03, "price": 15000, "feature": "Three acres, not in a subdivision - the most land on this map"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-92.81579, 37.952087], [-92.815985, 37.951949], [-92.81607, 37.952022], [-92.815874, 37.952158], [-92.81579, 37.952087]]]}, "properties": {"name": "Vehlings Niangua Beach Lot 116, Blk B", "parcel": "18-4.0-17.0-001.0-000-009.000", "acres": 0.062, "price": 15000, "feature": "Community river access"}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[-93.031068, 38.198575], [-93.031073, 38.198506], [-93.031078, 38.198438], [-93.031084, 38.198369], [-93.031171, 38.198373], [-93.031257, 38.198377], [-93.031344, 38.198382], [-93.031339, 38.19845], [-93.031334, 38.198519], [-93.031247, 38.198514], [-93.031241, 38.198583], [-93.031236, 38.198652], [-93.031149, 38.198647], [-93.031063, 38.198643], [-93.031068, 38.198575]]]}, "properties": {"name": "Pine Cove 4th Add, Blk 1, Lots 84-93", "parcel": "04-8.0-33.0-001.0-007-003.000", "acres": 0.143, "price": 6000, "feature": "Ten lots together"}}]};
+const COL='#16a34a';
+const money=n=>n==null?'—':'$'+Math.round(n).toLocaleString();
+const map=L.map('map',{zoomControl:true});
+const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,attribution:'Imagery © Esri'}).addTo(map);
+const st=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'});
+L.control.layers({'Satellite':sat,'Streets':st}).addTo(map);
+const layers=[];
+function popup(p){
+ return `<div class="pop"><h3>${p.name}</h3><div><span class="k">Parcel</span> ${p.parcel}</div>
+ <div><span class="k">Size</span> ${(+p.acres).toFixed(p.acres>=0.1?2:3)} acres</div>
+ ${p.feature?`<div style="margin-top:3px"><b>${p.feature}</b></div>`:''}
+ <div style="margin-top:4px"><span class="k">Price</span> <b>${money(p.price)}</b></div></div>`}
+DATA.features.forEach(f=>{const p=f.properties;const col=COL;
+ const poly=L.geoJSON(f,{style:{color:col,weight:3,fillColor:col,fillOpacity:.4}});const c=poly.getBounds().getCenter();
+ const pin=L.circleMarker(c,{radius:7,color:'#fff',weight:2,fillColor:col,fillOpacity:1});const lyr=L.featureGroup([poly,pin]);
+ lyr.bindPopup(popup(p),{maxWidth:340});
+ const tip=L.tooltip({permanent:true,direction:'top',offset:[0,-8],className:'lab'}).setContent(money(p.price)).setLatLng(c);
+ layers.push({f,lyr,tip,c})});
+function labels(){const z=map.getZoom();layers.forEach(({f,tip})=>{const show=z>=13;if(show)tip.addTo(map);else map.removeLayer(tip)})}
+map.on('zoomend',labels);
+function render(){ const list=document.getElementById('list');list.innerHTML='';const vis=[];
+ layers.forEach(({f,lyr,c})=>{const p=f.properties;const show=true;
+  if(show){lyr.addTo(map);vis.push(lyr)}else map.removeLayer(lyr);if(!show)return;
+  const it=document.createElement('div');it.className='item';
+  it.innerHTML=`<div class="dot" style="background:${COL}"></div><div><div class="t">${p.name}</div><div class="m">${(+p.acres).toFixed(p.acres>=0.1?2:3)} ac${p.feature?' · '+p.feature:''}<br><b>${money(p.price)}</b></div></div>`;
+  it.onclick=()=>{map.fitBounds(lyr.getBounds(),{maxZoom:18});lyr.openPopup()};list.appendChild(it)});
+ map.invalidateSize();if(vis.length)map.fitBounds(L.featureGroup(vis).getBounds(),{padding:[30,30]});labels()}
+map.setView([38.1,-92.75],10);render();let fitted=0;new ResizeObserver(()=>{if(fitted<3){fitted++;render()}}).observe(document.getElementById('map'));setTimeout(render,800);
+</script></body></html>
